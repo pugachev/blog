@@ -18,7 +18,11 @@ if (isset($_POST['name']) && isset($_POST['password'])) {
         // 結果が存在し、パスワードも正しい場合
         session_start();
         $_SESSION['id'] = $result['id'];
-        header('Location: backend.php');
+        if (isset($_POST['option'])) {
+            header('Location: post.php');
+        } else {
+            header('Location: backend.php');
+        }
     } else {
         $err = "ログインできませんでした。";
     }

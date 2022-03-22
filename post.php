@@ -1,4 +1,3 @@
-<!-- ここから変更 -->
 <?php
 include 'lib/secure.php';
 include 'lib/connect.php';
@@ -10,7 +9,7 @@ $title = ""; // タイトル
 $body = ""; // 本文
 $title_alert = ""; // タイトルのエラー文言
 $body_alert = ""; // 本文のエラー文言
-// var_dump("debug0");
+
 $queryCategory = new QueryCategory();
 $categories = $queryCategory->findAll();
 // var_dump("debug1");
@@ -36,11 +35,8 @@ if ((!empty($_POST['title']) && !empty($_POST['body'])) || (!empty($_GET['title'
 
     $article->save();
 
-    // ===== ここまで変更 =====
     header('Location: backend.php');
 } else if (!empty($_POST) || !empty($_GET)) {
-    var_dump("debug3");
-    die();
     // POSTメソッドで送信されたが、titleかbodyが足りないとき
     // 存在するほうは変数へ、ない場合空文字にしてフォームのvalueに設定する
     if (!empty($_POST['title'])) {
@@ -55,8 +51,7 @@ if ((!empty($_POST['title']) && !empty($_POST['body'])) || (!empty($_GET['title'
         $body_alert = "本文を入力してください。";
     }
 } else {
-    // var_dump("debug4");
-    // die();
+
 }
 ?>
 <!-- ここまで変更 -->
