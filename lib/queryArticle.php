@@ -146,7 +146,6 @@ class QueryArticle extends connect
     //     return $articles;
     // }
 
-    // ===== ↓find(), findAll() メソッドを書き換える ここから↓ =====
     public function find($id)
     {
         $stmt = $this->dbh->prepare("SELECT * FROM articles WHERE id=:id AND is_delete=0");
@@ -164,18 +163,18 @@ class QueryArticle extends connect
         $articles = $this->getArticles($stmt->fetchAll(PDO::FETCH_ASSOC));
         return $articles;
     }
-    // ===== ↑find(), findAll() メソッドを書き換える ここまで↑ =====
 
-    public function getPager($page = 1, $limit = 10, $month = null)
+    public function getPager($page = 1, $limit = 20, $month = null)
     {
         $start = ($page - 1) * $limit; // LIMIT x, y：1ページ目を表示するとき、xは0になる
         $pager = array('total' => null, 'articles' => null);
-        // 月指定があれば「2021-01%」のように検索できるよう末尾に追加
+        // 月指定があれば「2021-01%」のように検索できるよう末尾に追加 アーカイブ欄から渡される模様
         if ($month) {
             $month .= '%';
         }
         // 総記事数
         if ($month) {
+            //SELECT COUNT(*) FROM articles WHERE is_delete=0 AND created_at LIKE "2022-03%"; ←こんな感じのSQLみたいです
             $stmt = $this->dbh->prepare("SELECT COUNT(*) FROM articles WHERE is_delete=0 AND created_at LIKE :month");
             $stmt->bindParam(':month', $month, PDO::PARAM_STR);
         } else {
@@ -186,16 +185,11 @@ class QueryArticle extends connect
 
         // 表示するデータ
         if ($month) {
-            $stmt = $this->dbh->prepare("SELECT * FROM articles
-              WHERE is_delete=0 AND created_at LIKE :month
-              ORDER BY created_at DESC
-              LIMIT :start, :limit");
+            //SELECT * FROM articles WHERE is_delete=0 AND created_at LIKE "2022-03%" ORDER BY created_at DESC LIMIT 0,10; ←こんな感じのSQLです
+            $stmt = $this->dbh->prepare("SELECT * FROM articles WHERE is_delete=0 AND created_at LIKE :month ORDER BY created_at DESC LIMIT :start, :limit");
             $stmt->bindParam(':month', $month, PDO::PARAM_STR);
         } else {
-            $stmt = $this->dbh->prepare("SELECT * FROM articles
-              WHERE is_delete=0
-              ORDER BY created_at DESC
-              LIMIT :start, :limit");
+            $stmt = $this->dbh->prepare("SELECT * FROM articles WHERE is_delete=0 ORDER BY created_at DESC LIMIT :start, :limit");
         }
         $stmt->bindParam(':start', $start, PDO::PARAM_INT);
         $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
