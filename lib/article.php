@@ -1,7 +1,7 @@
 <?php
 class Article
 {
-    // ===== ここから変更 =====
+
     private $id = null;
     private $title = null;
     private $body = null;
@@ -10,7 +10,6 @@ class Article
     private $file = null;
     private $created_at = null;
     private $updated_at = null;
-    // ===== ここまで変更 =====
 
     public function save()
     {

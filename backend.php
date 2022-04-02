@@ -6,7 +6,7 @@ include 'lib/queryArticle.php';
 include 'lib/article.php';
 include 'lib/queryCategory.php';
 
-$limit = 10;
+$limit = 20;
 $page = 1;
 
 // ページ数の決定

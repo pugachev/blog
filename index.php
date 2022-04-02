@@ -3,7 +3,7 @@ include 'lib/connect.php';
 include 'lib/queryArticle.php';
 include 'lib/article.php';
 
-$limit = 5;
+$limit = 20;
 $page = 1;
 $month = null;
 $title = "";
@@ -11,7 +11,7 @@ $title = "";
 if (!empty($_GET['page']) && intval($_GET['page']) > 0) {
     $page = intval($_GET['page']);
 }
-// 月指定
+// 月指定 アーカイブ欄で指定した時にmonthが渡される模様
 if (!empty($_GET['month'])) {
     $month = $_GET['month'];
     $title = $month . 'の投稿一覧';
