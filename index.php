@@ -7,18 +7,27 @@ $limit = 20;
 $page = 1;
 $month = null;
 $title = "";
+
+//keyword検索
+if (!empty($_POST['keyword'])) {
+    $queryArticle = new QueryArticle();
+    $pager = $queryArticle->searchArticle($_POST['keyword']);
+    $monthly = $queryArticle->getMonthlyArchiveMenu();
+} else {
 // ページ数の決定
-if (!empty($_GET['page']) && intval($_GET['page']) > 0) {
-    $page = intval($_GET['page']);
-}
+    if (!empty($_GET['page']) && intval($_GET['page']) > 0) {
+        $page = intval($_GET['page']);
+    }
 // 月指定 アーカイブ欄で指定した時にmonthが渡される模様
-if (!empty($_GET['month'])) {
-    $month = $_GET['month'];
-    $title = $month . 'の投稿一覧';
+    if (!empty($_GET['month'])) {
+        $month = $_GET['month'];
+        $title = $month . 'の投稿一覧';
+    }
+    $queryArticle = new QueryArticle();
+    $pager = $queryArticle->getPager($page, $limit, $month);
+    $monthly = $queryArticle->getMonthlyArchiveMenu();
 }
-$queryArticle = new QueryArticle();
-$pager = $queryArticle->getPager($page, $limit, $month);
-$monthly = $queryArticle->getMonthlyArchiveMenu();
+
 ?>
 <!doctype html>
 <html lang="ja">
@@ -32,7 +41,7 @@ $monthly = $queryArticle->getMonthlyArchiveMenu();
 
     <style>
       body {
-        padding-top: 5rem;
+        padding-top: 6rem;
       }
       .bd-placeholder-img {
         font-size: 1.125rem;
@@ -54,9 +63,19 @@ $monthly = $queryArticle->getMonthlyArchiveMenu();
   </head>
   <body>
 
-<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+<!-- <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
   <div class="container">
     <a class="navbar-brand" href="/blog/">My Blog</a>
+  </div>
+</nav> -->
+
+<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+  <div class="container-fluid">
+      <a class="navbar-brand" href="/blog/">My Blog</a>
+      <form class="d-flex" action="index.php" method="post">
+        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="keyword">
+        <button class="btn btn-outline-success" type="submit">検索</button>
+      </form>
   </div>
 </nav>
 

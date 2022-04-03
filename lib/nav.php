@@ -7,6 +7,6 @@
           <li class="nav-item"><a class="nav-link" href="post.php">記事を書く</a></li>
           <li class="nav-item"><a class="nav-link" href="logout.php">ログアウト</a></li>
         </ul>
-      </div>
+    </div>
   </div>
 </nav>

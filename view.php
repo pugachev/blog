@@ -47,9 +47,19 @@ $monthly = $queryArticle->getMonthlyArchiveMenu();
   </head>
   <body>
 
-<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+<!-- <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
   <div class="container">
     <a class="navbar-brand" href="/blog/">My Blog</a>
+  </div>
+</nav> -->
+
+<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+  <div class="container-fluid">
+      <a class="navbar-brand" href="/blog/">My Blog</a>
+      <form class="d-flex">
+        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-success" type="submit">検索</button>
+      </form>
   </div>
 </nav>
 

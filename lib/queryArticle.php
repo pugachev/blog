@@ -146,6 +146,18 @@ class QueryArticle extends connect
     //     return $articles;
     // }
 
+    public function searchArticle($word)
+    {
+        $stmt = $this->dbh->prepare("SELECT * FROM articles WHERE body like :word AND is_delete=0");
+        $params = [
+            ':word' => '%' . $word . '%',
+        ];
+        $stmt->execute($params);
+        // $articles = $this->getArticles($stmt->fetchAll(PDO::FETCH_ASSOC));
+        $pager['articles'] = $this->getArticles($stmt->fetchAll(PDO::FETCH_ASSOC));
+        return $pager;
+    }
+
     public function find($id)
     {
         $stmt = $this->dbh->prepare("SELECT * FROM articles WHERE id=:id AND is_delete=0");
@@ -157,7 +169,8 @@ class QueryArticle extends connect
 
     public function findAll()
     {
-        $stmt = $this->dbh->prepare("SELECT * FROM articles WHERE is_delete=0 ORDER BY created_at DESC");
+        // $stmt = $this->dbh->prepare("SELECT * FROM articles WHERE is_delete=0 ORDER BY created_at DESC");
+        $stmt = $this->dbh->prepare("SELECT * FROM articles WHERE is_delete=0 ORDER BY title DESC");
         $stmt->execute();
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
         $articles = $this->getArticles($stmt->fetchAll(PDO::FETCH_ASSOC));
@@ -175,7 +188,8 @@ class QueryArticle extends connect
         // 総記事数
         if ($month) {
             //SELECT COUNT(*) FROM articles WHERE is_delete=0 AND created_at LIKE "2022-03%"; ←こんな感じのSQLみたいです
-            $stmt = $this->dbh->prepare("SELECT COUNT(*) FROM articles WHERE is_delete=0 AND created_at LIKE :month");
+            // $stmt = $this->dbh->prepare("SELECT COUNT(*) FROM articles WHERE is_delete=0 AND created_at LIKE :month");
+            $stmt = $this->dbh->prepare("SELECT COUNT(*) FROM articles WHERE is_delete=0 AND title LIKE :month");
             $stmt->bindParam(':month', $month, PDO::PARAM_STR);
         } else {
             $stmt = $this->dbh->prepare("SELECT COUNT(*) FROM articles WHERE is_delete=0");
@@ -186,10 +200,14 @@ class QueryArticle extends connect
         // 表示するデータ
         if ($month) {
             //SELECT * FROM articles WHERE is_delete=0 AND created_at LIKE "2022-03%" ORDER BY created_at DESC LIMIT 0,10; ←こんな感じのSQLです
-            $stmt = $this->dbh->prepare("SELECT * FROM articles WHERE is_delete=0 AND created_at LIKE :month ORDER BY created_at DESC LIMIT :start, :limit");
+            // $stmt = $this->dbh->prepare("SELECT * FROM articles WHERE is_delete=0 AND created_at LIKE :month ORDER BY created_at DESC LIMIT :start, :limit");
+            $stmt = $this->dbh->prepare("SELECT * FROM articles WHERE is_delete=0 AND title LIKE :month ORDER BY title DESC LIMIT :start, :limit");
             $stmt->bindParam(':month', $month, PDO::PARAM_STR);
         } else {
-            $stmt = $this->dbh->prepare("SELECT * FROM articles WHERE is_delete=0 ORDER BY created_at DESC LIMIT :start, :limit");
+            // $stmt = $this->dbh->prepare("SELECT * FROM articles WHERE is_delete=0 ORDER BY created_at DESC LIMIT :start, :limit");
+            $stmt = $this->dbh->prepare("SELECT * FROM articles WHERE is_delete=0 ORDER BY title DESC LIMIT :start, :limit");
+            // $stmt = $this->dbh->prepare("SELECT * FROM articles WHERE is_delete=0 AND title LIKE :month ORDER BY title DESC LIMIT :start, :limit");
+            // $stmt->bindParam(':month', $month, PDO::PARAM_STR);
         }
         $stmt->bindParam(':start', $start, PDO::PARAM_INT);
         $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
@@ -200,11 +218,17 @@ class QueryArticle extends connect
 
     public function getMonthlyArchiveMenu()
     {
+        // $stmt = $this->dbh->prepare("
+        //   SELECT DATE_FORMAT(created_at, '%Y-%m') AS month_menu, COUNT(*) AS count
+        //   FROM articles
+        //   WHERE is_delete = 0
+        //   GROUP BY DATE_FORMAT(created_at, '%Y-%m')
+        //   ORDER BY month_menu DESC");
         $stmt = $this->dbh->prepare("
-          SELECT DATE_FORMAT(created_at, '%Y-%m') AS month_menu, COUNT(*) AS count
+          SELECT DATE_FORMAT(title, '%Y-%m') AS month_menu, COUNT(*) AS count
           FROM articles
           WHERE is_delete = 0
-          GROUP BY DATE_FORMAT(created_at, '%Y-%m')
+          GROUP BY DATE_FORMAT(title, '%Y-%m')
           ORDER BY month_menu DESC");
         $stmt->execute();
         $return = array();
